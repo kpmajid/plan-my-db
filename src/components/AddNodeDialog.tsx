@@ -11,55 +11,44 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
-import { Node } from "@xyflow/react";
+import { Node, useReactFlow } from "@xyflow/react";
 
 interface AddNodeDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (nodeData: Node) => void;
   databaseType: string;
 }
 
-const AddNodeDialog = ({
+const AddNodeDialog: React.FC<AddNodeDialogProps> = ({
   isOpen,
   onClose,
-  onAdd,
   databaseType,
-}: AddNodeDialogProps) => {
+}) => {
+  const { addNodes } = useReactFlow();
   const [nodeName, setNodeName] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const defaultField =
-      databaseType === "mongodb"
-        ? {
-            id: uuidv4(),
-            name: "_id",
-            type: "ObjectId",
-            isRequired: true,
-            isIndex: true,
-            isUnique: true,
-          }
-        : {
-            id: uuidv4(),
-            name: "uuid",
-            type: "UUID",
-            isRequired: true,
-            isIndex: true,
-            isUnique: true,
-          };
-
-    const newNode = {
+    const defaultField = {
       id: uuidv4(),
-      type: "collection",
-      data: {
+      name: databaseType === "mongodb" ? "_id" : "uuid",
+      type: databaseType === "mongodb" ? "ObjectId" : "UUID",
+      isRequired: true,
+      isIndex: true,
+      isUnique: true,
+    };
+
+    const newNode: Node = {
+      id: uuidv4(),
+      type: databaseType === "mongodb" ? "collection" : "table",
+      data: { 
         label: nodeName,
         fields: [defaultField],
       },
       position: { x: Math.random() * 500, y: Math.random() * 500 },
     };
 
-    onAdd(newNode);
+    addNodes(newNode);
     setNodeName("");
     onClose();
   };

@@ -20,7 +20,7 @@ interface DatabaseSelectorProps {
   onSelect: (type: DatabaseType) => void;
 }
 
-const DatabaseSelector = ({ onSelect }: DatabaseSelectorProps) => {
+const DatabaseSelector: React.FC<DatabaseSelectorProps> = ({ onSelect }) => {
   return (
     <div className="flex items-center justify-center min-h-screen p-4">
       <Card className="w-full max-w-lg">

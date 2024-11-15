@@ -1,3 +1,5 @@
+import { useCallback, useState } from "react";
+
 import {
   ReactFlow,
   Background,
@@ -12,15 +14,15 @@ import {
   OnEdgesChange,
   applyNodeChanges,
   applyEdgeChanges,
+  ReactFlowProvider,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
 import { Button } from "./ui/button";
+import { PlusCircle } from "lucide-react";
 
 import { DatabaseType } from "@/types";
-import CollectionNode from "./CollectionNode";
-import { PlusCircle } from "lucide-react";
-import { useCallback, useState } from "react";
+import CollectionNode from "./Collection/CollectionNode";
 import AddNodeDialog from "./AddNodeDialog";
 
 interface SchemaPlannerProps {
@@ -40,11 +42,12 @@ const SchemaPlanner = ({ databaseType }: SchemaPlannerProps) => {
 
   const onNodesChange: OnNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-    [setNodes]
+    []
   );
+
   const onEdgesChange: OnEdgesChange = useCallback(
     (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-    [setEdges]
+    []
   );
 
   const onConnect = useCallback(
@@ -53,42 +56,41 @@ const SchemaPlanner = ({ databaseType }: SchemaPlannerProps) => {
     [setEdges]
   );
 
-  const handleAddNode = (newNode: Node) => {
-    setNodes((nds) => nds.concat(newNode));
-  };
-
   return (
-    <div className="w-full h-full flex flex-col">
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        nodeTypes={nodeTypes}
-        fitView
-      >
-        <Controls />
-        <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
-        <Panel position="top-left">
-          <h1 className="text-2xl font-bold">
-            {databaseType.charAt(0).toUpperCase() + databaseType.slice(1)}
-          </h1>
-        </Panel>
-        <Panel position="top-right">
-          <Button onClick={() => setIsAddNodeDialogOpen(true)}>
-            <PlusCircle className="mr-2 h-4 w-4" /> Add{" "}
-            {databaseType === "mongodb" ? "Collection" : "Table"}{" "}
-          </Button>
-        </Panel>
-      </ReactFlow>
-      <AddNodeDialog
-        isOpen={isAddNodeDialogOpen}
-        onClose={() => setIsAddNodeDialogOpen(false)}
-        onAdd={handleAddNode}
-        databaseType={databaseType}
-      />
-    </div>
+    <ReactFlowProvider>
+      <div className="w-full h-full flex flex-col">
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          nodeTypes={nodeTypes}
+          fitView
+          deleteKeyCode={null}
+        >
+          <Controls />
+          <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+          <Panel position="top-left">
+            <h1 className="text-2xl font-bold">
+              {databaseType.charAt(0).toUpperCase() + databaseType.slice(1)}
+            </h1>
+          </Panel>
+          <Panel position="top-right">
+            <Button onClick={() => setIsAddNodeDialogOpen(true)}>
+              <PlusCircle className="mr-2 h-4 w-4" /> Add{" "}
+              {databaseType === "mongodb" ? "Collection" : "Table"}{" "}
+            </Button>
+          </Panel>
+        </ReactFlow>
+
+        <AddNodeDialog
+          isOpen={isAddNodeDialogOpen}
+          onClose={() => setIsAddNodeDialogOpen(false)}
+          databaseType={databaseType}
+        />
+      </div>
+    </ReactFlowProvider>
   );
 };
 

@@ -13,6 +13,41 @@ export type MongoDBFieldType =
   | "Object"
   | "ObjectId";
 
+export type PostgreSQLFieldType =
+  | "TEXT"
+  | "INTEGER"
+  | "BIGINT"
+  | "REAL"
+  | "DOUBLE PRECISION"
+  | "BOOLEAN"
+  | "DATE"
+  | "TIMESTAMP"
+  | "ARRAY"
+  | "JSON"
+  | "JSONB";
+
+export type MySQLFieldType =
+  | "VARCHAR"
+  | "INT"
+  | "BIGINT"
+  | "FLOAT"
+  | "DOUBLE"
+  | "BOOLEAN"
+  | "DATE"
+  | "DATETIME"
+  | "TEXT"
+  | "JSON";
+
+export type SQLiteFieldType =
+  | "TEXT"
+  | "INTEGER"
+  | "REAL"
+  | "BOOLEAN"
+  | "DATE"
+  | "DATETIME"
+  | "BLOB"
+  | "JSON";
+
 export interface FieldReference {
   collectionId: Id;
   field: string;
@@ -23,9 +58,14 @@ export interface CollectionField {
   id: Id;
   name: string;
   type: MongoDBFieldType;
-  isRequired?: boolean;
-  isIndex?: boolean;
-  isUnique?: boolean;
+  isRequired: boolean;
+  isIndex: boolean;
+  isUnique: boolean;
+}
+
+export interface CollectionNodeData {
+  label: string;
+  fields: CollectionField[];
 }
 
 export interface CollectionNodeType extends Node {

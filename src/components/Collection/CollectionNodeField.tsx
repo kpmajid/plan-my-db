@@ -1,13 +1,20 @@
 import { Handle, Position } from "@xyflow/react";
 import { Asterisk, Hash, Fingerprint } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { CollectionField as CollectionFieldType } from "@/types";
+import { Id, MongoDBFieldType } from "@/types";
 
-interface CollectionFieldProps {
-  field: CollectionFieldType;
+interface CollectionNodeFieldProps {
+  field: {
+    id: Id;
+    name: string;
+    type: MongoDBFieldType;
+    isRequired: boolean;
+    isIndex: boolean;
+    isUnique: boolean;
+  };
 }
 
-const CollectionField: React.FC<CollectionFieldProps> = ({ field }) => {
+const CollectionNodeField: React.FC<CollectionNodeFieldProps> = ({ field }) => {
   return (
     <div
       key={field.id}
@@ -60,4 +67,4 @@ const CollectionField: React.FC<CollectionFieldProps> = ({ field }) => {
   );
 };
 
-export default CollectionField;
+export default CollectionNodeField;
