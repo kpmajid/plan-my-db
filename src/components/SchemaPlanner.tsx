@@ -15,6 +15,7 @@ import {
   applyNodeChanges,
   applyEdgeChanges,
   ReactFlowProvider,
+  IsValidConnection,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
@@ -32,6 +33,12 @@ interface SchemaPlannerProps {
 const nodeTypes: NodeTypes = {
   // table: TableNode,
   collection: CollectionNode,
+};
+
+type GenericField = {
+  id: string;
+  name: string;
+  type: string;
 };
 
 const SchemaPlanner = ({ databaseType }: SchemaPlannerProps) => {
@@ -56,6 +63,31 @@ const SchemaPlanner = ({ databaseType }: SchemaPlannerProps) => {
     [setEdges]
   );
 
+  const isValidConnection: IsValidConnection = (connection) => {
+    const { source, sourceHandle, target, targetHandle } = connection;
+    const sourceNode = nodes.find((node) => node.id == source);
+    const targetNode = nodes.find((node) => node.id == target);
+
+    if (!sourceNode || !targetNode || !sourceHandle || !targetHandle)
+      return false;
+
+    const sourceFields = sourceNode?.data.fields as GenericField[];
+    const sourceHandleId = sourceHandle.replace(/-left$/, "");
+    const sourceField = sourceFields.find(
+      (field) => field.id == sourceHandleId
+    );
+
+    const targetFields = targetNode?.data.fields as GenericField[];
+    const targetHandleId = targetHandle.replace(/-right$/, "");
+    const targetField = targetFields.find(
+      (field) => field.id == targetHandleId
+    );
+
+    if (!sourceField || !targetField) return false;
+
+    return sourceField.type === targetField.type;
+  };
+
   return (
     <ReactFlowProvider>
       <div className="w-full h-full flex flex-col">
@@ -65,9 +97,10 @@ const SchemaPlanner = ({ databaseType }: SchemaPlannerProps) => {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
+          isValidConnection={isValidConnection}
           nodeTypes={nodeTypes}
           fitView
-          deleteKeyCode={null}
+          // deleteKeyCode={null}
         >
           <Controls />
           <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
