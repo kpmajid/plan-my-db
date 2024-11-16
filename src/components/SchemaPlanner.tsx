@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import {
   ReactFlow,
@@ -25,6 +25,7 @@ import { PlusCircle } from "lucide-react";
 import { DatabaseType } from "@/types";
 import CollectionNode from "./Collection/CollectionNode";
 import AddNodeDialog from "./AddNodeDialog";
+import { loadEdges, loadNodes, saveState } from "@/utils/localStorage";
 
 interface SchemaPlannerProps {
   databaseType: DatabaseType;
@@ -44,6 +45,18 @@ type GenericField = {
 const SchemaPlanner = ({ databaseType }: SchemaPlannerProps) => {
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
+
+  useEffect(() => {
+    const loadedNodes = loadNodes();
+    const loadedEdges = loadEdges();
+
+    setNodes(loadedNodes);
+    setEdges(loadedEdges);
+  }, []);
+
+  useEffect(() => {
+    saveState({ nodes, edges });
+  }, [nodes, edges]);
 
   const [isAddNodeDialogOpen, setIsAddNodeDialogOpen] = useState(false);
 
@@ -65,8 +78,8 @@ const SchemaPlanner = ({ databaseType }: SchemaPlannerProps) => {
 
   const isValidConnection: IsValidConnection = (connection) => {
     const { source, sourceHandle, target, targetHandle } = connection;
-    const sourceNode = nodes.find((node) => node.id == source);
-    const targetNode = nodes.find((node) => node.id == target);
+    const sourceNode = nodes.find((node) => node.id === source);
+    const targetNode = nodes.find((node) => node.id === target);
 
     if (!sourceNode || !targetNode || !sourceHandle || !targetHandle)
       return false;
@@ -100,7 +113,7 @@ const SchemaPlanner = ({ databaseType }: SchemaPlannerProps) => {
           isValidConnection={isValidConnection}
           nodeTypes={nodeTypes}
           fitView
-          // deleteKeyCode={null}
+          deleteKeyCode={null}
         >
           <Controls />
           <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
