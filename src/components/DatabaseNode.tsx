@@ -1,12 +1,12 @@
 import { type NodeProps } from "@xyflow/react";
 
-import { CollectionNodeType } from "@/types";
-import { Button } from "../ui/button";
-import CollectionNodeField from "./CollectionNodeField";
-import EditCollectionNodeDialog from "../EditCollectionNodeDialog";
+import { DatabaseNodeType } from "@/types";
+import NodeField from "./NodeField";
+import EditDatabaseNodeDialog from "./EditDatabaseNodeDialog";
 import { useState } from "react";
+import { Button } from "./ui/button";
 
-const CollectionNode: React.FC<NodeProps<CollectionNodeType>> = ({
+const DatabaseNode: React.FC<NodeProps<DatabaseNodeType>> = ({
   data,
   selected,
 }) => {
@@ -32,11 +32,11 @@ const CollectionNode: React.FC<NodeProps<CollectionNodeType>> = ({
         </div>
         <div className="">
           {data.fields.map((field) => (
-            <CollectionNodeField key={field.id} field={field} />
+            <NodeField key={field.id} field={field} />
           ))}
         </div>
       </div>
-      <EditCollectionNodeDialog
+      <EditDatabaseNodeDialog
         data={data}
         isOpen={isEditNodeDialogOpen}
         onClose={() => setIsEditNodeDialogOpen(false)}
@@ -45,4 +45,4 @@ const CollectionNode: React.FC<NodeProps<CollectionNodeType>> = ({
   );
 };
 
-export default CollectionNode;
+export default DatabaseNode;

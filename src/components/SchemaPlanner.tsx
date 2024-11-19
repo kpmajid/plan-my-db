@@ -22,9 +22,10 @@ import "@xyflow/react/dist/style.css";
 import { Button } from "./ui/button";
 import { PlusCircle } from "lucide-react";
 
-import { DatabaseType } from "@/types";
-import CollectionNode from "./Collection/CollectionNode";
+import { DatabaseType, GenericField } from "@/types";
+
 import AddNodeDialog from "./AddNodeDialog";
+import DatabaseNode from "./DatabaseNode";
 import { loadEdges, loadNodes, saveState } from "@/utils/localStorage";
 
 interface SchemaPlannerProps {
@@ -32,31 +33,32 @@ interface SchemaPlannerProps {
 }
 
 const nodeTypes: NodeTypes = {
-  // table: TableNode,
-  collection: CollectionNode,
-};
-
-type GenericField = {
-  id: string;
-  name: string;
-  type: string;
+  databaseNode: DatabaseNode,
 };
 
 const SchemaPlanner = ({ databaseType }: SchemaPlannerProps) => {
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    const loadedNodes = loadNodes();
-    const loadedEdges = loadEdges();
+    if (!isLoaded) {
+      const loadedNodes = loadNodes();
+      const loadedEdges = loadEdges();
 
-    setNodes(loadedNodes);
-    setEdges(loadedEdges);
-  }, []);
+      if (loadedNodes.length > 0 || loadedEdges.length > 0) {
+        setNodes(loadedNodes);
+        setEdges(loadedEdges);
+      }
+      setIsLoaded(true);
+    }
+  }, [isLoaded]);
 
   useEffect(() => {
-    saveState({ nodes, edges });
-  }, [nodes, edges]);
+    if (isLoaded) {
+      saveState({ nodes, edges });
+    }
+  }, [nodes, edges, isLoaded]);
 
   const [isAddNodeDialogOpen, setIsAddNodeDialogOpen] = useState(false);
 

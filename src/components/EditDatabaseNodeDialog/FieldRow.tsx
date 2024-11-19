@@ -1,4 +1,4 @@
-import { CollectionField, MongoDBFieldType } from "@/types";
+import { DatabaseField, DatabaseType, MongoDBFieldType } from "@/types";
 import { TableCell, TableRow } from "../ui/table";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -11,28 +11,25 @@ import {
 } from "../ui/select";
 import { Trash2 } from "lucide-react";
 import FieldOptions from "./FieldOptions";
+import { getFieldTypes } from "./utils";
+// import FieldOptions from "./FieldOptions";
 
 interface FieldRowProps {
-  field: CollectionField;
-  onFieldChange: (updates: Partial<CollectionField>) => void;
+  databasaeType: DatabaseType;
+  field: DatabaseField;
+  onFieldChange: (updates: Partial<DatabaseField>) => void;
   onRemoveField: () => void;
 }
 
 const FieldRow: React.FC<FieldRowProps> = ({
+  databasaeType,
   field,
   onFieldChange,
   onRemoveField,
 }) => {
-  const isIdField = field.name === "_id";
-  const fieldTypes = [
-    "String",
-    "Number",
-    "Boolean",
-    "Date",
-    "Array",
-    "Object",
-    "ObjectId",
-  ];
+  const isIdField = ["_id", "id"].includes(field.name);
+
+  const fieldTypes = getFieldTypes(databasaeType);
 
   return isIdField ? (
     <TableRow>
@@ -53,7 +50,6 @@ const FieldRow: React.FC<FieldRowProps> = ({
         <Input
           value={field.name}
           onChange={(e) => onFieldChange({ name: e.target.value })}
-          disabled={isIdField}
         />
       </TableCell>
       <TableCell>
@@ -62,7 +58,6 @@ const FieldRow: React.FC<FieldRowProps> = ({
           onValueChange={(value: MongoDBFieldType) =>
             onFieldChange({ type: value })
           }
-          disabled={isIdField}
         >
           <SelectTrigger>
             <SelectValue placeholder="Select type" />
@@ -84,12 +79,7 @@ const FieldRow: React.FC<FieldRowProps> = ({
         />
       </TableCell>
       <TableCell>
-        <Button
-          variant="destructive"
-          size="sm"
-          onClick={onRemoveField}
-          disabled={isIdField}
-        >
+        <Button variant="destructive" size="sm" onClick={onRemoveField}>
           <Trash2 className="h-4 w-4" />
         </Button>
       </TableCell>

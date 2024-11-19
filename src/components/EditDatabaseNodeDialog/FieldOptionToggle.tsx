@@ -24,9 +24,13 @@ const FieldOptionToggle: React.FC<FieldOptionToggleProps> = ({
           aria-label={`Toggle ${label.toLowerCase()}`}
           data-state={isPressed ? "on" : "off"}
           onClick={() => onChange(!isPressed)}
-          className={`${
-            isPressed ? "bg-secondary text-primary-foreground" : "bg-background"
-          }`}
+          className={`
+            data-[state=on]:bg-primary data-[state=on]:text-primary-foreground
+            hover:bg-background 
+            border-2 border-input
+            rounded-md px-3 py-2
+             data-[disabled]:opacity-100 data-[disabled]:cursor-not-allowed
+          `}
         >
           {icon}
         </ToggleGroupItem>

@@ -1,4 +1,4 @@
-import { CollectionField } from "@/types";
+import { DatabaseField, DatabaseType } from "@/types";
 import {
   Table,
   TableBody,
@@ -6,15 +6,21 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import FieldRow from "./FieldRow";
+
 import { handleFieldChange, handleRemoveField } from "./utils";
+import FieldRow from "./FieldRow";
 
 interface FieldsTableProps {
-  fields: CollectionField[];
-  setFields: React.Dispatch<React.SetStateAction<CollectionField[]>>;
+  databasaeType: DatabaseType;
+  fields: DatabaseField[];
+  setFields: React.Dispatch<React.SetStateAction<DatabaseField[]>>;
 }
 
-const FieldsTable: React.FC<FieldsTableProps> = ({ fields, setFields }) => {
+const FieldsTable: React.FC<FieldsTableProps> = ({
+  databasaeType,
+  fields,
+  setFields,
+}) => {
   return (
     <Table>
       <TableHeader>
@@ -29,6 +35,7 @@ const FieldsTable: React.FC<FieldsTableProps> = ({ fields, setFields }) => {
         {fields.map((field) => (
           <FieldRow
             key={field.id}
+            databasaeType={databasaeType}
             field={field}
             onFieldChange={(updates) =>
               handleFieldChange(field.id, updates, fields, setFields)

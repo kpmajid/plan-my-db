@@ -1,13 +1,13 @@
 import { Handle, Position } from "@xyflow/react";
 import { Asterisk, Hash, Fingerprint } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { CollectionField } from "@/types";
+import { DatabaseField } from "@/types";
 
-interface CollectionNodeFieldProps {
-  field: CollectionField;
+interface NodeFieldProps {
+  field: DatabaseField;
 }
 
-const CollectionNodeField: React.FC<CollectionNodeFieldProps> = ({ field }) => {
+const NodeField: React.FC<NodeFieldProps> = ({ field }) => {
   return (
     <div
       key={field.id}
@@ -60,4 +60,4 @@ const CollectionNodeField: React.FC<CollectionNodeFieldProps> = ({ field }) => {
   );
 };
 
-export default CollectionNodeField;
+export default NodeField;

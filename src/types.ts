@@ -54,23 +54,36 @@ export interface FieldReference {
   type: "one-to-one" | "one-to-many" | "many-to-one" | "many-to-many";
 }
 
-export interface CollectionField {
+export interface DatabaseField {
   id: Id;
   name: string;
-  type: MongoDBFieldType;
+  type:
+    | MongoDBFieldType
+    | PostgreSQLFieldType
+    | MySQLFieldType
+    | SQLiteFieldType;
   isRequired: boolean;
   isIndex: boolean;
   isUnique: boolean;
 }
 
-export interface CollectionNodeData {
+export interface DatabaseNodeData {
   label: string;
-  fields: CollectionField[];
+  fields: DatabaseField[];
+  databaseType: DatabaseType;
 }
 
-export interface CollectionNodeType extends Node {
+export interface DatabaseNodeType extends Node {
   data: {
     label: string;
-    fields: CollectionField[];
+    fields: DatabaseField[];
+    databaseType: DatabaseType;
   };
 }
+
+export type GenericField = {
+  id: string;
+  name: string;
+  type: string;
+};
+

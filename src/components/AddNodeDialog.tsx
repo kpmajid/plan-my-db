@@ -31,7 +31,7 @@ const AddNodeDialog: React.FC<AddNodeDialogProps> = ({
     e.preventDefault();
     const defaultField = {
       id: uuidv4(),
-      name: databaseType === "mongodb" ? "_id" : "uuid",
+      name: databaseType === "mongodb" ? "_id" : "id",
       type: databaseType === "mongodb" ? "ObjectId" : "UUID",
       isRequired: true,
       isIndex: true,
@@ -40,10 +40,11 @@ const AddNodeDialog: React.FC<AddNodeDialogProps> = ({
 
     const newNode: Node = {
       id: uuidv4(),
-      type: databaseType === "mongodb" ? "collection" : "table",
-      data: { 
+      type: "databaseNode",
+      data: {
         label: nodeName,
         fields: [defaultField],
+        databaseType,
       },
       position: { x: Math.random() * 500, y: Math.random() * 500 },
     };

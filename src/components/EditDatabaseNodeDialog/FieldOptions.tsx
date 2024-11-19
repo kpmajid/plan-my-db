@@ -1,13 +1,13 @@
 import { Asterisk, Fingerprint, Hash } from "lucide-react";
 import { ToggleGroup } from "../ui/toggle-group";
 import { TooltipProvider } from "../ui/tooltip";
+import { DatabaseField } from "@/types";
 import FieldOptionToggle from "./FieldOptionToggle";
-import { CollectionField } from "@/types";
 
 interface FieldOptionsProps {
-  field: CollectionField;
+  field: DatabaseField;
   isIdField: boolean;
-  onFieldChange: (updates: Partial<CollectionField>) => void;
+  onFieldChange: (updates: Partial<DatabaseField>) => void;
 }
 
 const FieldOptions: React.FC<FieldOptionsProps> = ({

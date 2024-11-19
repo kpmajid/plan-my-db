@@ -1,10 +1,4 @@
-import { useEffect, useState } from "react";
-
-import { CollectionField, CollectionNodeData } from "@/types";
-import EntityHeader from "./EntityHeader";
-import FieldsTable from "./FieldsTable";
-
-import { handleAddField } from "./utils";
+import { DatabaseNodeData } from "@/types";
 
 import {
   Dialog,
@@ -23,16 +17,21 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../ui/alert-dialog";
-import { Button } from "../ui/button";
-import { useNodeId, useReactFlow } from "@xyflow/react";
+import { Button } from "@/components/ui/button";
 
-interface EditNodeDialogProps {
-  data: CollectionNodeData;
+import { useNodeId, useReactFlow } from "@xyflow/react";
+import { useEffect, useState } from "react";
+import EntityHeader from "./EntityHeader";
+import FieldsTable from "./FieldsTable";
+import { handleAddField } from "./utils";
+
+interface EditDatabaseNodeDialogProps {
+  data: DatabaseNodeData;
   isOpen: boolean;
   onClose: () => void;
 }
 
-const EditNodeDialog: React.FC<EditNodeDialogProps> = ({
+const EditDatabaseNodeDialog: React.FC<EditDatabaseNodeDialogProps> = ({
   data,
   isOpen,
   onClose,
@@ -40,11 +39,13 @@ const EditNodeDialog: React.FC<EditNodeDialogProps> = ({
   const { updateNode } = useReactFlow();
   const id = useNodeId();
   const [label, setLabel] = useState(data?.label || "");
-  const [fields, setFields] = useState<CollectionField[]>(data?.fields || []);
+  const [fields, setFields] = useState(data?.fields || []);
 
   const [hasChanges, setHasChanges] = useState(false);
   const [isConfirmCloseDialogOpen, setIsConfirmCloseDialogOpen] =
     useState(false);
+
+  const databasaeType = data.databaseType;
 
   useEffect(() => {
     setHasChanges(
@@ -94,12 +95,21 @@ const EditNodeDialog: React.FC<EditNodeDialogProps> = ({
         <DialogContent className="sm:max-w-[725px]">
           <DialogHeader>
             <DialogTitle>
-              <EntityHeader label={label} setLabel={setLabel} />
+              <EntityHeader
+                label={label}
+                setLabel={setLabel}
+                databasaeType={databasaeType}
+              />
             </DialogTitle>
           </DialogHeader>
-          <FieldsTable fields={fields} setFields={setFields} />
+
+          <FieldsTable
+            databasaeType={databasaeType}
+            fields={fields}
+            setFields={setFields}
+          />
           <Button
-            onClick={() => handleAddField(fields, setFields)}
+            onClick={() => handleAddField(databasaeType, fields, setFields)}
             className="mt-4"
           >
             Add Field
@@ -137,4 +147,4 @@ const EditNodeDialog: React.FC<EditNodeDialogProps> = ({
   );
 };
 
-export default EditNodeDialog;
+export default EditDatabaseNodeDialog;

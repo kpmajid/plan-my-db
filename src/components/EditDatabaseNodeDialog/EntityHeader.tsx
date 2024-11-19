@@ -14,16 +14,24 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Trash2 } from "lucide-react";
 import { useNodeId, useReactFlow } from "@xyflow/react";
+import { DatabaseType } from "@/types";
 
 interface EntityHeaderProps {
   label: string;
   setLabel: (label: string) => void;
+  databasaeType: DatabaseType;
 }
 
-const EntityHeader: React.FC<EntityHeaderProps> = ({ label, setLabel }) => {
+const EntityHeader: React.FC<EntityHeaderProps> = ({
+  label,
+  setLabel,
+  databasaeType,
+}) => {
   const id = useNodeId();
   const { setNodes } = useReactFlow();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  const isMongoDB = databasaeType === "mongodb" ? true : false;
 
   const handleDelete = () => {
     setIsDeleteDialogOpen(false);
@@ -48,7 +56,7 @@ const EntityHeader: React.FC<EntityHeaderProps> = ({ label, setLabel }) => {
         <AlertDialogTrigger asChild>
           <Button variant="destructive" size="sm">
             <Trash2 className="h-4 w-4 mr-2" />
-            Delete Collection
+            Delete {isMongoDB ? "Collection" : "Table"}
           </Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
@@ -56,7 +64,8 @@ const EntityHeader: React.FC<EntityHeaderProps> = ({ label, setLabel }) => {
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete your
-              collection and remove all associated data.
+              {isMongoDB ? "collection" : "table"} and remove all associated
+              data.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
