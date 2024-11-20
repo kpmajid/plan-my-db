@@ -10,12 +10,14 @@ import {
   addEdge,
   type Node,
   type Edge,
+  type Connection,
   OnNodesChange,
   OnEdgesChange,
   applyNodeChanges,
   applyEdgeChanges,
   ReactFlowProvider,
   IsValidConnection,
+  EdgeTypes,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
@@ -27,6 +29,8 @@ import { DatabaseType, GenericField } from "@/types";
 import AddNodeDialog from "./AddNodeDialog";
 import DatabaseNode from "./DatabaseNode";
 import { loadEdges, loadNodes, saveState } from "@/utils/localStorage";
+import CustomEdge from "./CustomEdge";
+import ConnectionTypeDialog from "./ConnectionTypeDialog";
 
 interface SchemaPlannerProps {
   databaseType: DatabaseType;
@@ -36,10 +40,21 @@ const nodeTypes: NodeTypes = {
   databaseNode: DatabaseNode,
 };
 
+const edgeTypes: EdgeTypes = {
+  custom: CustomEdge,
+};
+
 const SchemaPlanner = ({ databaseType }: SchemaPlannerProps) => {
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isAddNodeDialogOpen, setIsAddNodeDialogOpen] = useState(false);
+
+  const [isConnectionDialogOpen, setIsConnectionDialogOpen] = useState(false);
+  const [pendingConnection, setPendingConnection] = useState<Connection | null>(
+    null
+  );
+  const [connectionType, setConnectionType] = useState<string>("one-to-one");
 
   useEffect(() => {
     if (!isLoaded) {
@@ -60,8 +75,6 @@ const SchemaPlanner = ({ databaseType }: SchemaPlannerProps) => {
     }
   }, [nodes, edges, isLoaded]);
 
-  const [isAddNodeDialogOpen, setIsAddNodeDialogOpen] = useState(false);
-
   const onNodesChange: OnNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
     []
@@ -72,11 +85,24 @@ const SchemaPlanner = ({ databaseType }: SchemaPlannerProps) => {
     []
   );
 
-  const onConnect = useCallback(
-    (params: Parameters<typeof addEdge>[0]) =>
-      setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
-  );
+  const onConnect = useCallback((connection: Connection) => {
+    setPendingConnection(connection);
+    setIsConnectionDialogOpen(true);
+  }, []);
+
+  const handleConnectionConfirm = () => {
+    if (pendingConnection) {
+      const edge = {
+        ...pendingConnection,
+        type: "custom",
+        data: { label: connectionType },
+      };
+      setEdges((eds) => addEdge(edge, eds));
+      setIsConnectionDialogOpen(false);
+      setPendingConnection(null);
+      setConnectionType("one-to-one");
+    }
+  };
 
   const isValidConnection: IsValidConnection = (connection) => {
     const { source, sourceHandle, target, targetHandle } = connection;
@@ -114,8 +140,9 @@ const SchemaPlanner = ({ databaseType }: SchemaPlannerProps) => {
           onConnect={onConnect}
           isValidConnection={isValidConnection}
           nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
           fitView
-          deleteKeyCode={null}
+          // deleteKeyCode={null}
         >
           <Controls />
           <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
@@ -136,6 +163,12 @@ const SchemaPlanner = ({ databaseType }: SchemaPlannerProps) => {
           isOpen={isAddNodeDialogOpen}
           onClose={() => setIsAddNodeDialogOpen(false)}
           databaseType={databaseType}
+        />
+
+        <ConnectionTypeDialog
+          isOpen={isConnectionDialogOpen}
+          onClose={() => setIsConnectionDialogOpen(false)}
+          onConfirm={handleConnectionConfirm}
         />
       </div>
     </ReactFlowProvider>
