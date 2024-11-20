@@ -10,17 +10,7 @@ import {
 } from "@xyflow/react";
 
 import { X } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "./ui/dialog";
-import { Label } from "./ui/label";
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
-import { Button } from "./ui/button";
+import ConnectionTypeDialog from "./ConnectionTypeDialog";
 
 type CustomEdgeProps = Edge<{ label: string }>;
 
@@ -46,9 +36,6 @@ const CustomEdge: React.FC<EdgeProps<CustomEdgeProps>> = ({
   });
 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
-  const [connectionType, setConnectionType] = useState(
-    data?.label || "one-to-one"
-  );
 
   const handleDelete = () => {
     setEdges((es) => es.filter((e) => e.id !== id));
@@ -58,7 +45,7 @@ const CustomEdge: React.FC<EdgeProps<CustomEdgeProps>> = ({
     setIsEditDialogOpen(true);
   };
 
-  const handleEditConfirm = () => {
+  const handleEditConfirm = (connectionType: string) => {
     setEdges((edges) =>
       edges.map((edge) =>
         edge.id === id
@@ -100,37 +87,12 @@ const CustomEdge: React.FC<EdgeProps<CustomEdgeProps>> = ({
         </div>
       </EdgeLabelRenderer>
 
-      <Dialog
-        open={isEditDialogOpen}
-        onOpenChange={() => setIsEditDialogOpen(false)}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Select Connection Type</DialogTitle>
-            <DialogDescription>
-              Choose the type of relationship between these entities.
-            </DialogDescription>
-          </DialogHeader>
-          <RadioGroup value={connectionType} onValueChange={setConnectionType}>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="one-to-one" id="one-to-one" />
-              <Label htmlFor="one-to-one">One-to-One</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="one-to-many" id="one-to-many" />
-              <Label htmlFor="one-to-many">One-to-Many</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="many-to-many" id="many-to-many" />
-              <Label htmlFor="many-to-many">Many-to-Many</Label>
-            </div>
-          </RadioGroup>
-          <DialogFooter>
-            <Button onClick={() => setIsEditDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleEditConfirm}>Confirm</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ConnectionTypeDialog
+        isOpen={isEditDialogOpen}
+        onClose={() => setIsEditDialogOpen(false)}
+        onConfirm={handleEditConfirm}
+        initialValue={data?.label}
+      />
     </>
   );
 };

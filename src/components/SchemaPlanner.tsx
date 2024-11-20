@@ -48,13 +48,12 @@ const SchemaPlanner = ({ databaseType }: SchemaPlannerProps) => {
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [isAddNodeDialogOpen, setIsAddNodeDialogOpen] = useState(false);
 
-  const [isConnectionDialogOpen, setIsConnectionDialogOpen] = useState(false);
+  const [isAddNodeDialogOpen, setIsAddNodeDialogOpen] = useState(false);
   const [pendingConnection, setPendingConnection] = useState<Connection | null>(
     null
   );
-  const [connectionType, setConnectionType] = useState<string>("one-to-one");
+  const [isConnectionDialogOpen, setIsConnectionDialogOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoaded) {
@@ -90,7 +89,7 @@ const SchemaPlanner = ({ databaseType }: SchemaPlannerProps) => {
     setIsConnectionDialogOpen(true);
   }, []);
 
-  const handleConnectionConfirm = () => {
+  const handleConnectionConfirm = (connectionType: string) => {
     if (pendingConnection) {
       const edge = {
         ...pendingConnection,
@@ -100,8 +99,12 @@ const SchemaPlanner = ({ databaseType }: SchemaPlannerProps) => {
       setEdges((eds) => addEdge(edge, eds));
       setIsConnectionDialogOpen(false);
       setPendingConnection(null);
-      setConnectionType("one-to-one");
     }
+  };
+
+  const handleConnectionDialogClose = () => {
+    setIsConnectionDialogOpen(false);
+    setPendingConnection(null);
   };
 
   const isValidConnection: IsValidConnection = (connection) => {
@@ -167,8 +170,9 @@ const SchemaPlanner = ({ databaseType }: SchemaPlannerProps) => {
 
         <ConnectionTypeDialog
           isOpen={isConnectionDialogOpen}
-          onClose={() => setIsConnectionDialogOpen(false)}
+          onClose={handleConnectionDialogClose}
           onConfirm={handleConnectionConfirm}
+          initialValue="one-to-one"
         />
       </div>
     </ReactFlowProvider>

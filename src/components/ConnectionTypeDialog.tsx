@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -15,18 +15,24 @@ interface ConnectionTypeDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: (type: string) => void;
+  initialValue?: string;
 }
 
 const ConnectionTypeDialog: React.FC<ConnectionTypeDialogProps> = ({
   isOpen,
   onClose,
   onConfirm,
+  initialValue = "one-to-one",
 }) => {
-  const [connectionType, setConnectionType] = useState<string>("one-to-one");
+  const [connectionType, setConnectionType] = useState<string>(initialValue);
+
+  useEffect(() => {
+    setConnectionType(initialValue);
+  }, [initialValue]);
 
   const handleConfirm = () => {
     onConfirm(connectionType);
-    setConnectionType("one-to-one");
+    onClose();
   };
 
   return (
