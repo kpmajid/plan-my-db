@@ -12,7 +12,6 @@ import {
 import { Trash2 } from "lucide-react";
 import FieldOptions from "./FieldOptions";
 import { getFieldTypes } from "./utils";
-// import FieldOptions from "./FieldOptions";
 
 interface FieldRowProps {
   databasaeType: DatabaseType;

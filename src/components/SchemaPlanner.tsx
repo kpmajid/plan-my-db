@@ -166,7 +166,7 @@ const SchemaPlanner: React.FC<SchemaPlannerProps> = ({
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
           fitView
-          // deleteKeyCode={null}
+          deleteKeyCode={null}
         >
           <Controls />
           <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
