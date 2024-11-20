@@ -28,12 +28,20 @@ import { DatabaseType, GenericField } from "@/types";
 
 import AddNodeDialog from "./AddNodeDialog";
 import DatabaseNode from "./DatabaseNode";
-import { loadEdges, loadNodes, saveState } from "@/utils/localStorage";
+import {
+  clearState,
+  loadEdges,
+  loadNodes,
+  saveState,
+} from "@/utils/localStorage";
 import CustomEdge from "./CustomEdge";
 import ConnectionTypeDialog from "./ConnectionTypeDialog";
+import { GearIcon } from "@radix-ui/react-icons";
+import SettingsDialog from "./SettingsDialog";
 
 interface SchemaPlannerProps {
   databaseType: DatabaseType;
+  setDatabaseType: (type: DatabaseType | null) => void;
 }
 
 const nodeTypes: NodeTypes = {
@@ -44,7 +52,10 @@ const edgeTypes: EdgeTypes = {
   custom: CustomEdge,
 };
 
-const SchemaPlanner = ({ databaseType }: SchemaPlannerProps) => {
+const SchemaPlanner: React.FC<SchemaPlannerProps> = ({
+  databaseType,
+  setDatabaseType,
+}) => {
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -54,6 +65,8 @@ const SchemaPlanner = ({ databaseType }: SchemaPlannerProps) => {
     null
   );
   const [isConnectionDialogOpen, setIsConnectionDialogOpen] = useState(false);
+
+  const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoaded) {
@@ -105,6 +118,14 @@ const SchemaPlanner = ({ databaseType }: SchemaPlannerProps) => {
   const handleConnectionDialogClose = () => {
     setIsConnectionDialogOpen(false);
     setPendingConnection(null);
+  };
+
+  const handleReset = () => {
+    clearState();
+    setNodes([]);
+    setEdges([]);
+    setDatabaseType(null);
+    setIsSettingsDialogOpen(false);
   };
 
   const isValidConnection: IsValidConnection = (connection) => {
@@ -160,6 +181,11 @@ const SchemaPlanner = ({ databaseType }: SchemaPlannerProps) => {
               {databaseType === "mongodb" ? "Collection" : "Table"}{" "}
             </Button>
           </Panel>
+          <Panel position="bottom-right">
+            <Button onClick={() => setIsSettingsDialogOpen(true)}>
+              <GearIcon className="h-4 w-4" />
+            </Button>
+          </Panel>
         </ReactFlow>
 
         <AddNodeDialog
@@ -173,6 +199,12 @@ const SchemaPlanner = ({ databaseType }: SchemaPlannerProps) => {
           onClose={handleConnectionDialogClose}
           onConfirm={handleConnectionConfirm}
           initialValue="one-to-one"
+        />
+
+        <SettingsDialog
+          isOpen={isSettingsDialogOpen}
+          onClose={() => setIsSettingsDialogOpen(false)}
+          onReset={handleReset}
         />
       </div>
     </ReactFlowProvider>

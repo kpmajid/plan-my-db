@@ -20,7 +20,10 @@ const App = () => {
       {!databaseType ? (
         <DatabaseSelector onSelect={handleDatabaseSelect} />
       ) : (
-        <SchemaPlanner databaseType={databaseType} />
+        <SchemaPlanner
+          databaseType={databaseType}
+          setDatabaseType={setDatabaseType}
+        />
       )}
     </div>
   );

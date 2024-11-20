@@ -43,3 +43,9 @@ export const saveState = ({
     console.error("Error saving state:", error);
   }
 };
+
+export const clearState = () => {
+  localStorage.removeItem("nodes");
+  localStorage.removeItem("edges");
+  localStorage.removeItem("databaseType");
+};
